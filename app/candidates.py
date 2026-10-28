@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 
@@ -16,6 +17,11 @@ MAX_RADIO_SEEDS = 2
 MAX_PER_ARTIST = 3
 MAX_SECONDS = 10 * 60
 
+# YouTube Music upload types, best first: official audio, official video, unlabelled, fan upload.
+TYPE_RANK = {"MUSIC_VIDEO_TYPE_ATV": 0, "MUSIC_VIDEO_TYPE_OMV": 1, None: 2, "MUSIC_VIDEO_TYPE_UGC": 3}
+_BRACKETS = re.compile(r"[(\[][^)\]]*[)\]]")
+_NOISE = re.compile(r"\b(official|lyrical|lyrics?|video|audio|song|full|hd|4k)\b")
+
 
 @dataclass
 class Candidate:
@@ -28,6 +34,7 @@ class Candidate:
     playlists: set[str] = field(default_factory=set)  # which curated playlists it appeared in
     best_position: int = PLAYLIST_LIMIT  # earliest position across those playlists
     from_your_radio: bool = False
+    video_type: str | None = None
     score: float = 0.0
 
 
@@ -63,9 +70,10 @@ def rank(pool: dict[str, Candidate], taste: Taste, keep: int) -> list[Candidate]
     favourite_artists = {a.casefold() for a in taste.top_artists}
 
     scored: list[Candidate] = []
-    for candidate in pool.values():
-        if candidate.video_id in recent:
+    for versions in group_versions(pool.values()):
+        if any(v.video_id in recent for v in versions):
             continue
+        candidate = merge(versions)
         if candidate.duration_seconds and candidate.duration_seconds > MAX_SECONDS:
             continue
         mood_fit = 2.0 * len(candidate.playlists)  # several curated lists agreeing is a strong signal
@@ -89,6 +97,32 @@ def rank(pool: dict[str, Candidate], taste: Taste, keep: int) -> list[Candidate]
     return kept
 
 
+def song_key(title: str) -> str:
+    """Same song across uploads: "Inthandham Lyrical Video Song - Sita Ramam" and
+    "Inthandham (From "Sita Ramam (Telugu)")" both become "inthandham"."""
+    base = _BRACKETS.sub(" ", title.casefold()).split(" - ")[0]
+    base = _NOISE.sub(" ", base)
+    return " ".join(re.sub(r"[^\w\s]", " ", base).split()) or title.casefold()
+
+
+def group_versions(candidates) -> list[list[Candidate]]:
+    groups: dict[str, list[Candidate]] = {}
+    for c in candidates:
+        groups.setdefault(song_key(c.title), []).append(c)
+    return list(groups.values())
+
+
+def merge(versions: list[Candidate]) -> Candidate:
+    """Keeps the best upload (official audio first) but credits every playlist any version was in."""
+    best = min(versions, key=lambda v: (TYPE_RANK.get(v.video_type, 2), v.best_position))
+    if len(versions) == 1:
+        return best
+    best.playlists = set().union(*(v.playlists for v in versions))
+    best.best_position = min(v.best_position for v in versions)
+    best.from_your_radio = any(v.from_your_radio for v in versions)
+    return best
+
+
 def _add(pool: dict[str, Candidate], track: dict) -> Candidate | None:
     video_id = track.get("videoId")
     if not video_id or track.get("isAvailable") is False:
@@ -103,6 +137,7 @@ def _add(pool: dict[str, Candidate], track: dict) -> Candidate | None:
             album=album.get("name") if isinstance(album, dict) else None,
             duration_seconds=track.get("duration_seconds") or _seconds(track.get("length") or track.get("duration")),
             thumbnail=thumbs[-1]["url"] if thumbs else None,
+            video_type=track.get("videoType"),
         )
     return pool[video_id]
 

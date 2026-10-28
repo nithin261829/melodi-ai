@@ -32,7 +32,7 @@ flowchart TD
 2. **Narrow.** YouTube Music's *Moods & genres* section holds ~3,400 editor-curated playlists, each labelled by category and shelf (e.g. *Sad › Bollywood sad*). Sending them all on every request would cost ~40K tokens, so code filters them to ~150 using the target's categories and keywords.
 3. **Pick.** Claude chooses 3–6 playlists from that numbered shortlist. **Every number is checked in code**, so a hallucinated pick is simply dropped.
 4. **Collect.** The chosen playlists' real tracks, plus YouTube radio seeded from songs the listener has liked *that also appear in today's picks* (fits both mood and taste).
-5. **Score.** A transparent, deterministic ranking: songs several curated lists agree on score highest, then favourite artists and radio. Recently played songs are dropped, and each artist is capped at 3.
+5. **Score.** A transparent, deterministic ranking: songs several curated lists agree on score highest, then favourite artists and radio. Different uploads of the same song (lyric video, official video, audio) are merged first, keeping the official audio and crediting every playlist any version appeared in. Recently played songs are dropped, and each artist is capped at 3.
 6. **Sequence.** Claude orders the best 40 into a smooth energy flow and writes the title, description and a short "why" for each song. Code again validates every number and tops up from the scores if needed.
 
 **Design principles**

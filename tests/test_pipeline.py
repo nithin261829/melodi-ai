@@ -1,6 +1,6 @@
 """Offline tests for the deterministic parts of the pipeline (no network, no LLM)."""
 
-from app.candidates import Candidate, rank
+from app.candidates import Candidate, rank, song_key
 from app.catalog import Catalog, CatalogPlaylist
 from app.models import MixPlan, MusicTarget, OrderedPick, Taste
 from app.planner import assemble, clean_target, narrow, valid_picks
@@ -26,10 +26,12 @@ def make_target(**overrides) -> MusicTarget:
     return MusicTarget(**{**base, **overrides})
 
 
-def candidate(vid: str, artist: str, playlists: int = 1, position: int = 50, radio: bool = False) -> Candidate:
+def candidate(
+    vid: str, artist: str, playlists: int = 1, position: int = 50, radio: bool = False, title: str | None = None, video_type: str | None = None
+) -> Candidate:
     return Candidate(
         video_id=vid,
-        title=f"Song {vid}",
+        title=title or f"Song {vid}",
         artists=[artist],
         album=None,
         duration_seconds=200,
@@ -37,6 +39,7 @@ def candidate(vid: str, artist: str, playlists: int = 1, position: int = 50, rad
         playlists={f"PL{i}" for i in range(playlists)},
         best_position=position,
         from_your_radio=radio,
+        video_type=video_type,
     )
 
 
@@ -85,3 +88,26 @@ def test_assemble_keeps_valid_order_and_tops_up():
     tracks = assemble(mix, ranked, size=3)
     assert [t.video_id for t in tracks] == ["2", "0", "1"]
     assert tracks[0].why == "fits" and tracks[1].why is None
+
+
+def test_song_key_matches_uploads_of_the_same_song():
+    assert song_key("Inthandham Lyrical Video Song - Sita Ramam (Telugu)") == "inthandham"
+    assert song_key('Inthandham (From "Sita Ramam (Telugu)")') == "inthandham"
+    assert song_key("Urike Urike") == song_key("Urike Urike (Official Video)")
+    assert song_key("Kalaavathi") != song_key("Urike Urike")
+
+
+def test_rank_merges_versions_and_keeps_official_audio():
+    lyric = candidate("v1", "Sony Music South", title="Urike Urike Lyrical Video", video_type="MUSIC_VIDEO_TYPE_OMV")
+    lyric.playlists = {"PL1"}
+    audio = candidate("v2", "Sid Sriram", title="Urike Urike", video_type="MUSIC_VIDEO_TYPE_ATV")
+    audio.playlists = {"PL2"}
+    ranked = rank({"v1": lyric, "v2": audio}, Taste(), keep=10)
+    assert [c.video_id for c in ranked] == ["v2"]
+    assert ranked[0].playlists == {"PL1", "PL2"}  # agreement across both uploads counts
+
+
+def test_rank_skips_a_song_if_any_version_was_played_recently():
+    a = candidate("v1", "X", title="Same Song")
+    b = candidate("v2", "X", title="Same Song (Official Audio)")
+    assert rank({"v1": a, "v2": b}, Taste(recent_video_ids=["v2"]), keep=10) == []
