@@ -12,9 +12,13 @@ from .models import Usage
 
 T = TypeVar("T", bound=BaseModel)
 
-MODEL = os.environ.get("MELODI_MODEL", "claude-opus-5-5")
-# Each step is a short, well-specified judgement call, so low effort keeps a mix to a few seconds.
+# Each step is a short, well-specified judgement over small prompts (~2-4K tokens), which Haiku
+# handles at a fraction of Opus's cost and latency. Override with MELODI_MODEL to compare.
+MODEL = os.environ.get("MELODI_MODEL", "claude-haiku-5-5")
 EFFORT = os.environ.get("MELODI_EFFORT", "low")
+
+# Models that accept server-side refusal fallbacks (`fallbacks: "default"`); Haiku 5.5 does not.
+FALLBACK_MODELS = {"claude-opus-5-5", "claude-opus-5", "claude-fable-5-1", "claude-sonnet-5-5"}
 
 _client: anthropic.Anthropic | None = None
 
@@ -38,6 +42,8 @@ def client() -> anthropic.Anthropic:
 
 def ask(system: str, prompt: str, schema: type[T], usage: Usage) -> T:
     """Sends one request and returns Claude's answer parsed into `schema`."""
+    # If a safety classifier declines, supported models retry on a suitable model within the same call.
+    fallback = {"betas": ["server-side-fallback-2026-07-01"], "fallbacks": "default"} if MODEL in FALLBACK_MODELS else {}
     response = client().beta.messages.parse(
         model=MODEL,
         max_tokens=16000,
@@ -45,9 +51,7 @@ def ask(system: str, prompt: str, schema: type[T], usage: Usage) -> T:
         messages=[{"role": "user", "content": prompt}],
         output_format=schema,
         output_config={"effort": EFFORT},
-        # If a safety classifier declines, the API retries on a suitable model within the same call.
-        betas=["server-side-fallback-2026-07-01"],
-        fallbacks="default",
+        **fallback,
     )
     usage.model = response.model
     usage.input_tokens += response.usage.input_tokens
