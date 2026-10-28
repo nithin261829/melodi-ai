@@ -41,16 +41,26 @@ Melodi uses the LLM for what it's good at (**understanding context and making ju
 ## How it works
 
 ```mermaid
+%%{init: {"themeVariables": {"fontSize": "20px"}, "flowchart": {"nodeSpacing": 30, "rankSpacing": 40, "padding": 16}}}%%
 flowchart TD
-    A["📱 Phone: time · weather · activity · city · mood · description · taste"] --> B
-    B["1 · Understand (Claude, structured output)<br/>→ categories, keywords, languages, energy, valence"] --> C
-    C["2 · Narrow (code)<br/>3,364 curated YouTube Music playlists → ~150 matches"] --> D
-    D["3 · Pick (Claude, structured output)<br/>→ 3–6 playlist numbers, validated against the shortlist"] --> E
-    E["4 · Collect (code)<br/>real tracks from those playlists + radio seeded by liked songs"] --> F
-    F["5 · Score (code)<br/>mood agreement · prominence · favourite artists · radio<br/>− recent plays · artist cap → top 40"] --> G
-    G["6 · Sequence (Claude, structured output)<br/>running order, title, description, per-song reasons"] --> H
-    H["📱 Phone plays the mix"]
+    A["📱 <b>Your moment</b><br/>time · weather · place · mood"]
+    B["🧠 <b>1. Understand</b><br/>Claude reads the moment"]
+    C["🔎 <b>2. Narrow</b><br/>3,364 playlists → ~150"]
+    D["🧠 <b>3. Pick</b><br/>Claude chooses 3–6 playlists"]
+    E["🎵 <b>4. Collect</b><br/>real songs + your radio"]
+    F["📊 <b>5. Score</b><br/>rank and trim to top 40"]
+    G["🧠 <b>6. Sequence</b><br/>Claude orders the mix"]
+    H["▶️ <b>Your mix</b><br/>25 songs, each with a reason"]
+    A --> B --> C --> D --> E --> F --> G --> H
+    classDef ai fill:#efe7ff,stroke:#8b5cff,stroke-width:2px,color:#1a1a1a
+    classDef code fill:#e6f4ff,stroke:#2f80ed,stroke-width:2px,color:#1a1a1a
+    classDef phone fill:#ffe8ef,stroke:#ff3d6e,stroke-width:2px,color:#1a1a1a
+    class B,D,G ai
+    class C,E,F code
+    class A,H phone
 ```
+
+<p align="center"><sub>🧠 purple = Claude (structured output) · blue = plain code · pink = the phone</sub></p>
 
 1. **Understand.** Claude reads the moment and returns a `MusicTarget`: which of YouTube Music's 39 mood and genre categories fit, title keywords (e.g. *Tollywood*), languages, and target **energy** and **valence**. Valence (sad ↔ happy) and arousal (calm ↔ energetic) are the two axes music-emotion research uses.
 2. **Narrow.** YouTube Music's *Moods & genres* section holds ~3,400 editor-curated playlists, each labelled by category and shelf (e.g. *Sad › Bollywood sad*). Sending them all on every request would cost ~40K tokens, so code filters them to ~150 using the target's categories and keywords.
