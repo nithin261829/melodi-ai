@@ -1,93 +1,100 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" width="1400" height="900" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
-<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1d1d27"/></marker></defs>
-<rect width="1400" height="900" rx="18" fill="#fbfbfd"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1030" width="1400" height="1030" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+<defs>
+<marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1d1d27"/></marker>
+<marker id="head-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#14a37f"/></marker>
+</defs>
+<rect width="1400" height="1030" rx="18" fill="#fbfbfd"/>
 <text x="700.0" y="48" font-size="26" font-weight="800" fill="#1d1d27" text-anchor="middle">Melo + Melodi AI: system architecture</text>
 <rect x="30" y="80" width="420" height="610" rx="14" fill="#fff3f6" stroke="#ff3d6e" stroke-width="2"/>
 <text x="50" y="114" font-size="21" font-weight="800" fill="#ff3d6e" text-anchor="start">iPhone · Melo app</text>
 <text x="50" y="136" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">React Native · Expo · TypeScript · Swift</text>
-<rect x="45" y="152" width="390" height="58" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
-<text x="59" y="178" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">Screens (Expo Router)</text>
-<text x="59" y="199" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">Home · Melodi AI tab · Search · Library · Player</text>
-<rect x="45" y="222" width="390" height="76" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
-<text x="59" y="248" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">Context sensing  ·  context.ts</text>
-<text x="59" y="269" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">time · sunset · weather · driving / walking · city</text>
-<text x="59" y="287" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">turned into labels on the phone</text>
-<rect x="45" y="310" width="390" height="76" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
-<text x="59" y="336" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">Melodi client  ·  melodi.ts</text>
-<text x="59" y="357" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">auto-mix when the app opens</text>
-<text x="59" y="375" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">reuses the mix for 30 min · taste summary</text>
-<rect x="45" y="398" width="390" height="58" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
-<text x="59" y="424" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">Player  ·  expo-audio</text>
-<text x="59" y="445" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">queue · radio · lock screen · Dynamic Island</text>
-<rect x="45" y="468" width="390" height="76" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
-<text x="59" y="494" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">Native Swift modules</text>
-<text x="59" y="515" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">RemoteCommands (next / previous)</text>
-<text x="59" y="533" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">WebCookies (Google sign-in)</text>
-<rect x="45" y="556" width="390" height="58" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
-<text x="59" y="582" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">On-device storage</text>
-<text x="59" y="603" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">likes · recents · downloads · Keychain</text>
+<rect x="45" y="152" width="390" height="76" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
+<text x="59" y="179" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">Screens (Expo Router)</text>
+<text x="59" y="201" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">Home · Melodi AI tab · Search · Library</text>
+<rect x="45" y="240" width="390" height="76" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
+<text x="59" y="267" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">Melodi client · melodi.ts</text>
+<text x="59" y="289" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">mix on open · reuse for 30 min</text>
+<rect x="45" y="328" width="390" height="76" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
+<text x="59" y="355" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">Player · expo-audio</text>
+<text x="59" y="377" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">queue · lock screen · Dynamic Island</text>
+<rect x="45" y="416" width="390" height="76" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
+<text x="59" y="443" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">Native Swift modules</text>
+<text x="59" y="465" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">RemoteCommands · WebCookies</text>
+<rect x="45" y="504" width="390" height="76" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
+<text x="59" y="531" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">On-device storage</text>
+<text x="59" y="553" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">likes · recents · downloads · Keychain</text>
+<rect x="45" y="592" width="390" height="76" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
+<text x="59" y="619" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">Taste summary</text>
+<text x="59" y="641" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">top artists from likes and recent plays</text>
 <rect x="600" y="80" width="400" height="610" rx="14" fill="#f4f0ff" stroke="#8b5cff" stroke-width="2"/>
 <text x="620" y="114" font-size="21" font-weight="800" fill="#8b5cff" text-anchor="start">Melodi AI server</text>
-<text x="620" y="136" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">Python · FastAPI · Pydantic · runs on the Mac</text>
-<rect x="615" y="152" width="370" height="58" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
-<text x="629" y="178" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">POST /v1/plan</text>
-<text x="629" y="199" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">checks the app token · validates the request</text>
-<rect x="615" y="224" width="370" height="64" rx="10" fill="#ebe3ff" stroke="#8b5cff" stroke-width="1.5"/>
-<text x="629" y="250" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">1  Understand</text>
-<text x="629" y="271" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">Claude: moods, keywords, languages, energy</text>
-<rect x="615" y="298" width="370" height="64" rx="10" fill="#ffffff" stroke="#2f80ed" stroke-width="1.5"/>
-<text x="629" y="324" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">2  Narrow</text>
-<text x="629" y="345" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">code: 3,364 curated playlists → ~150</text>
-<rect x="615" y="372" width="370" height="64" rx="10" fill="#ebe3ff" stroke="#8b5cff" stroke-width="1.5"/>
-<text x="629" y="398" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">3  Pick</text>
-<text x="629" y="419" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">Claude: 3–6 playlists (numbers checked)</text>
-<rect x="615" y="446" width="370" height="64" rx="10" fill="#ffffff" stroke="#2f80ed" stroke-width="1.5"/>
-<text x="629" y="472" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">4  Collect</text>
-<text x="629" y="493" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">code: real songs + radio from your likes</text>
-<rect x="615" y="520" width="370" height="64" rx="10" fill="#ffffff" stroke="#2f80ed" stroke-width="1.5"/>
-<text x="629" y="546" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">5  Score</text>
-<text x="629" y="567" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">code: merge duplicates, rank, top 40</text>
-<rect x="615" y="594" width="370" height="64" rx="10" fill="#ebe3ff" stroke="#8b5cff" stroke-width="1.5"/>
-<text x="629" y="620" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">6  Sequence</text>
-<text x="629" y="641" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">Claude: order, title, a reason per song</text>
+<text x="620" y="136" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">Python · FastAPI · Anthropic SDK</text>
+<rect x="615" y="152" width="370" height="76" rx="10" fill="#ebe3ff" stroke="#8b5cff" stroke-width="1.5"/>
+<text x="629" y="179" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">1  Understand</text>
+<text x="629" y="201" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">Claude: moods, keywords, energy</text>
+<rect x="615" y="240" width="370" height="76" rx="10" fill="#ffffff" stroke="#2f80ed" stroke-width="1.5"/>
+<text x="629" y="267" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">2  Narrow</text>
+<text x="629" y="289" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">code: 3,364 playlists → ~150</text>
+<rect x="615" y="328" width="370" height="76" rx="10" fill="#ebe3ff" stroke="#8b5cff" stroke-width="1.5"/>
+<text x="629" y="355" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">3  Pick</text>
+<text x="629" y="377" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">Claude: 3–6 playlists, numbers checked</text>
+<rect x="615" y="416" width="370" height="76" rx="10" fill="#ffffff" stroke="#2f80ed" stroke-width="1.5"/>
+<text x="629" y="443" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">4  Collect</text>
+<text x="629" y="465" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">code: real songs + radio from likes</text>
+<rect x="615" y="504" width="370" height="76" rx="10" fill="#ffffff" stroke="#2f80ed" stroke-width="1.5"/>
+<text x="629" y="531" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">5  Score</text>
+<text x="629" y="553" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">code: merge duplicates, rank, top 40</text>
+<rect x="615" y="592" width="370" height="76" rx="10" fill="#ebe3ff" stroke="#8b5cff" stroke-width="1.5"/>
+<text x="629" y="619" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">6  Sequence</text>
+<text x="629" y="641" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">Claude: order, title, reason per song</text>
 <rect x="1080" y="80" width="290" height="610" rx="14" fill="#eef5ff" stroke="#2f80ed" stroke-width="2"/>
 <text x="1100" y="114" font-size="21" font-weight="800" fill="#2f80ed" text-anchor="start">Cloud services</text>
-<rect x="1095" y="190" width="260" height="104" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
-<text x="1109" y="216" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">Claude API</text>
-<text x="1109" y="237" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">Haiku 5.5 (default)</text>
-<text x="1109" y="255" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">structured outputs</text>
-<text x="1109" y="273" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">≈ $0.002 per mix</text>
-<rect x="1095" y="420" width="260" height="104" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
-<text x="1109" y="446" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">YouTube Music</text>
-<text x="1109" y="467" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">Moods &amp; genres catalogue</text>
-<text x="1109" y="485" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">playlists and radio</text>
-<text x="1109" y="503" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">via ytmusicapi · cached 24 h</text>
-<rect x="30" y="760" width="200" height="96" rx="10" fill="#ffffff" stroke="#2f80ed" stroke-width="1.5"/>
-<text x="44" y="786" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">Open-Meteo</text>
-<text x="44" y="807" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">weather + sunset</text>
-<text x="44" y="825" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">free, no API key</text>
-<rect x="250" y="760" width="200" height="96" rx="10" fill="#ffffff" stroke="#2f80ed" stroke-width="1.5"/>
-<text x="264" y="786" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">YouTube InnerTube</text>
-<text x="264" y="807" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">search · home feed</text>
-<text x="264" y="825" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">HLS audio for playback</text>
-<line x1="452" y1="330" x2="597" y2="330" stroke="#1d1d27" stroke-width="2.2" marker-end="url(#head)"/>
-<text x="525" y="300" font-size="13.5" font-weight="700" fill="#1d1d27" text-anchor="middle">context labels</text>
-<text x="525" y="318" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="middle">+ taste (no GPS)</text>
-<line x1="597" y1="378" x2="455" y2="378" stroke="#1d1d27" stroke-width="2.2" marker-end="url(#head)"/>
-<text x="525" y="400" font-size="13.5" font-weight="700" fill="#1d1d27" text-anchor="middle">25 songs</text>
-<text x="525" y="418" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="middle">+ reasons</text>
-<line x1="1002" y1="242" x2="1092" y2="242" stroke="#1d1d27" stroke-width="2.2" marker-end="url(#head)"/>
-<text x="1041" y="230" font-size="13.5" font-weight="700" fill="#1d1d27" text-anchor="middle">3 calls</text>
-<line x1="1002" y1="472" x2="1092" y2="472" stroke="#1d1d27" stroke-width="2.2" marker-end="url(#head)"/>
-<text x="1041" y="460" font-size="13.5" font-weight="700" fill="#1d1d27" text-anchor="middle">fetch</text>
-<line x1="130" y1="692" x2="130" y2="757" stroke="#1d1d27" stroke-width="2.2" marker-end="url(#head)"/>
-<text x="140" y="732" font-size="12.5" font-weight="normal" fill="#555566" text-anchor="start">rounded location</text>
-<line x1="350" y1="692" x2="350" y2="757" stroke="#1d1d27" stroke-width="2.2" marker-end="url(#head)"/>
-<text x="360" y="732" font-size="12.5" font-weight="normal" fill="#555566" text-anchor="start">stream</text>
-<text x="600" y="735" font-size="15" font-weight="800" fill="#1d1d27" text-anchor="start">Legend</text>
-<rect x="600" y="749" width="22" height="16" rx="4" fill="#ebe3ff" stroke="#8b5cff" stroke-width="1.5"/>
-<text x="632" y="762" font-size="13.5" font-weight="normal" fill="#1d1d27" text-anchor="start">Claude (LLM) step: structured output, every answer checked by code</text>
-<rect x="600" y="775" width="22" height="16" rx="4" fill="#ffffff" stroke="#2f80ed" stroke-width="1.5"/>
-<text x="632" y="788" font-size="13.5" font-weight="normal" fill="#1d1d27" text-anchor="start">Plain code step: deterministic and unit-tested</text>
-<text x="600" y="817" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">Privacy: GPS stays on the phone · the API key stays on the server · nothing is stored</text>
+<text x="1100" y="136" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">used by the server or the app</text>
+<rect x="1095" y="152" width="260" height="76" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
+<text x="1109" y="179" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">Claude API</text>
+<text x="1109" y="201" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">Haiku 5.5 · structured outputs</text>
+<rect x="1095" y="328" width="260" height="76" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
+<text x="1109" y="355" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">YouTube Music</text>
+<text x="1109" y="377" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">curated playlists · radio</text>
+<rect x="1095" y="504" width="260" height="76" rx="10" fill="#ffffff" stroke="#c9c9d6" stroke-width="1.5"/>
+<text x="1109" y="531" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">YouTube InnerTube</text>
+<text x="1109" y="553" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">search · HLS audio (playback)</text>
+<path d="M437,268.0 L612,268.0" fill="none" stroke="#1d1d27" stroke-width="2.2" marker-end="url(#head)"/>
+<text x="525" y="256.0" font-size="13" font-weight="700" fill="#1d1d27" text-anchor="middle">labels + taste</text>
+<path d="M612,292.0 L440,292.0" fill="none" stroke="#1d1d27" stroke-width="2.2" marker-end="url(#head)"/>
+<text x="525" y="312.0" font-size="13" font-weight="700" fill="#1d1d27" text-anchor="middle">25 songs + reasons</text>
+<path d="M987,190.0 L1092,190.0" fill="none" stroke="#1d1d27" stroke-width="2.2" marker-end="url(#head)"/>
+<text x="1039" y="180.0" font-size="13" font-weight="700" fill="#1d1d27" text-anchor="middle">3 calls</text>
+<path d="M987,454.0 L1040,454.0 L1040,366.0 L1092,366.0" fill="none" stroke="#1d1d27" stroke-width="2.2" marker-end="url(#head)"/>
+<text x="1012" y="474.0" font-size="13" font-weight="700" fill="#1d1d27" text-anchor="middle">fetch</text>
+<path d="M437,366.0 L520,366.0 L520,712 L1225,712 L1225,584" fill="none" stroke="#1d1d27" stroke-width="2.2" marker-end="url(#head)"/>
+<text x="820" y="706" font-size="13" font-weight="700" fill="#1d1d27" text-anchor="middle">the app streams audio from YouTube</text>
+<rect x="30" y="740" width="1340" height="190" rx="14" fill="#ecfaf5" stroke="#14a37f" stroke-width="2"/>
+<text x="50" y="774" font-size="21" font-weight="800" fill="#14a37f" text-anchor="start">Location &amp; context · sensed on the phone (context.ts)</text>
+<text x="50" y="796" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">Only these labels leave the phone. GPS never does.</text>
+<rect x="50.0" y="814" width="313.0" height="96" rx="10" fill="#ffffff" stroke="#14a37f" stroke-width="1.5"/>
+<text x="64.0" y="841" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">Time &amp; sunset</text>
+<text x="64.0" y="863" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">daypart · golden hour</text>
+<text x="64.0" y="881" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">from the phone clock</text>
+<rect x="379.0" y="814" width="313.0" height="96" rx="10" fill="#ffffff" stroke="#14a37f" stroke-width="1.5"/>
+<text x="393.0" y="841" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">Weather</text>
+<text x="393.0" y="863" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">Open-Meteo (free, no key)</text>
+<text x="393.0" y="881" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">location rounded to ~1 km</text>
+<rect x="708.0" y="814" width="313.0" height="96" rx="10" fill="#ffffff" stroke="#14a37f" stroke-width="1.5"/>
+<text x="722.0" y="841" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">Movement</text>
+<text x="722.0" y="863" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">still · walking · driving</text>
+<text x="722.0" y="881" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">from GPS speed</text>
+<rect x="1037.0" y="814" width="313.0" height="96" rx="10" fill="#ffffff" stroke="#14a37f" stroke-width="1.5"/>
+<text x="1051.0" y="841" font-size="16.5" font-weight="700" fill="#1d1d27" text-anchor="start">City &amp; country</text>
+<text x="1051.0" y="863" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">reverse geocode on device</text>
+<text x="1051.0" y="881" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">picks the regional catalogue</text>
+<path d="M240,738 L240,694" fill="none" stroke="#14a37f" stroke-width="2.2" marker-end="url(#head-green)"/>
+<text x="252" y="728" font-size="13" font-weight="700" fill="#14a37f" text-anchor="start">context labels</text>
+<rect x="30" y="965" width="22" height="16" rx="4" fill="#ebe3ff" stroke="#8b5cff" stroke-width="1.5"/>
+<text x="62" y="978" font-size="13.5" font-weight="normal" fill="#1d1d27" text-anchor="start">Claude step (structured output, checked by code)</text>
+<rect x="430" y="965" width="22" height="16" rx="4" fill="#ffffff" stroke="#2f80ed" stroke-width="1.5"/>
+<text x="462" y="978" font-size="13.5" font-weight="normal" fill="#1d1d27" text-anchor="start">Plain code step (deterministic, unit-tested)</text>
+<rect x="800" y="965" width="22" height="16" rx="4" fill="#ecfaf5" stroke="#14a37f" stroke-width="1.5"/>
+<text x="832" y="978" font-size="13.5" font-weight="normal" fill="#1d1d27" text-anchor="start">Location &amp; context (on the phone)</text>
+<text x="30" y="1011" font-size="13.5" font-weight="normal" fill="#555566" text-anchor="start">The API key stays on the server · requests need the app token · nothing is stored</text>
 </svg>
