@@ -77,7 +77,11 @@ uv sync
 uv run uvicorn app.main:app --host 0.0.0.0 --port 8787
 ```
 
-Point the app at it: in the Melo root, `cp .env.example .env` and set `EXPO_PUBLIC_MELODI_URL=http://<your Mac's IP>:8787`, then rebuild the app.
+Point the app at it (phone and Mac on the same Wi-Fi):
+1. In the Melo root, `cp .env.example .env` and set `EXPO_PUBLIC_MELODI_URL=http://<your Mac's name>.local:8787`. Find the name with `scutil --get LocalHostName`. A `.local` name keeps working when the router gives the Mac a new IP.
+2. Put the same random value in `MELODI_APP_TOKEN` (here) and `EXPO_PUBLIC_MELODI_TOKEN` (app), so only your app can spend your API credit. Generate one with `python3 -c "import secrets; print(secrets.token_urlsafe(24))"`.
+3. Rebuild the app. On first use, iOS asks for **Location** and **Local Network** access.
+4. If the phone can't connect, the macOS Firewall is probably blocking it: System Settings → Network → Firewall → Options → allow incoming connections for `python3.12`.
 
 ## Tests
 
