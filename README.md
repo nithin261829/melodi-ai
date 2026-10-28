@@ -40,27 +40,19 @@ Melodi uses the LLM for what it's good at (**understanding context and making ju
 
 ## How it works
 
-```mermaid
-%%{init: {"themeVariables": {"fontSize": "20px"}, "flowchart": {"nodeSpacing": 30, "rankSpacing": 40, "padding": 16}}}%%
-flowchart TD
-    A["📱 <b>Your moment</b><br/>time · weather · place · mood"]
-    B["🧠 <b>1. Understand</b><br/>Claude reads the moment"]
-    C["🔎 <b>2. Narrow</b><br/>3,364 playlists → ~150"]
-    D["🧠 <b>3. Pick</b><br/>Claude chooses 3–6 playlists"]
-    E["🎵 <b>4. Collect</b><br/>real songs + your radio"]
-    F["📊 <b>5. Score</b><br/>rank and trim to top 40"]
-    G["🧠 <b>6. Sequence</b><br/>Claude orders the mix"]
-    H["▶️ <b>Your mix</b><br/>25 songs, each with a reason"]
-    A --> B --> C --> D --> E --> F --> G --> H
-    classDef ai fill:#efe7ff,stroke:#8b5cff,stroke-width:2px,color:#1a1a1a
-    classDef code fill:#e6f4ff,stroke:#2f80ed,stroke-width:2px,color:#1a1a1a
-    classDef phone fill:#ffe8ef,stroke:#ff3d6e,stroke-width:2px,color:#1a1a1a
-    class B,D,G ai
-    class C,E,F code
-    class A,H phone
-```
+**📱 Your moment → 🧠 Understand → 🔎 Narrow → 🧠 Pick → 🎵 Collect → 📊 Score → 🧠 Sequence → ▶️ Your mix**
 
-<p align="center"><sub>🧠 purple = Claude (structured output) · blue = plain code · pink = the phone</sub></p>
+| Step | Done by | What happens | Result |
+|:---:|:---|:---|:---|
+| 📱 **Input** | Phone | Reads the time and sunset, weather, whether you're driving or walking, your city, your mood or description, and your favourite artists | A short list of labels (no GPS) |
+| 🧠 **1. Understand** | Claude | Works out what this moment calls for | Categories, keywords, languages, energy, happy ↔ sad |
+| 🔎 **2. Narrow** | Code | Filters YouTube Music's 3,364 curated mood playlists to the ones that match | ~150 playlists |
+| 🧠 **3. Pick** | Claude | Chooses the playlists that fit best; code rejects any number not on the list | 3–6 playlists |
+| 🎵 **4. Collect** | Code | Loads the real songs from those playlists, plus radio from songs you've liked | ~150–300 real songs |
+| 📊 **5. Score** | Code | Ranks by how many lists agree, your favourite artists and radio; merges duplicate uploads; drops recent plays; max 3 per artist | Top 40 songs |
+| 🧠 **6. Sequence** | Claude | Orders them into a smooth flow and writes the title and a reason for each song | Your mix: 25 songs |
+
+🧠 = Claude (structured output, every answer checked by code) · 🔎 🎵 📊 = plain, tested code
 
 1. **Understand.** Claude reads the moment and returns a `MusicTarget`: which of YouTube Music's 39 mood and genre categories fit, title keywords (e.g. *Tollywood*), languages, and target **energy** and **valence**. Valence (sad ↔ happy) and arousal (calm ↔ energetic) are the two axes music-emotion research uses.
 2. **Narrow.** YouTube Music's *Moods & genres* section holds ~3,400 editor-curated playlists, each labelled by category and shelf (e.g. *Sad › Bollywood sad*). Sending them all on every request would cost ~40K tokens, so code filters them to ~150 using the target's categories and keywords.
