@@ -16,7 +16,7 @@ Tell it nothing and it still works: it knows it's 9:40 pm, raining, you're drivi
 > [!IMPORTANT]
 > **A learning project, not a product.** I built Melodi AI to learn how to put an LLM into a real feature without letting it make things up: structured outputs, grounding the model in real data, measuring cost and latency, and testing everything around the model. It isn't affiliated with YouTube, Google or Anthropic. See the [disclaimer](#disclaimer).
 
-<p align="center"><img src="docs/architecture.svg" alt="Architecture: the Melo iPhone app sends context labels to the Melodi AI server, which runs a six-step pipeline using the Claude API and YouTube Music, and returns 25 songs with reasons" width="100%" /></p>
+<p align="center"><img src="architecture.svg" alt="Architecture: the Melo iPhone app sends context labels to the Melodi AI server, which runs a six-step pipeline using the Claude API and YouTube Music, and returns 25 songs with reasons" width="100%" /></p>
 
 ---
 
