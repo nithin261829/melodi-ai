@@ -21,7 +21,7 @@ APP_TOKEN = os.environ.get("MELODI_APP_TOKEN", "")
 
 
 def require_app_token(x_melodi_token: str = Header(default="")) -> None:
-    """When MELODI_APP_TOKEN is set, only the Melo app (which knows it) can spend the API budget."""
+    """When MELODI_APP_TOKEN is set, only your app (which knows it) can spend the API budget."""
     if APP_TOKEN and not hmac.compare_digest(x_melodi_token, APP_TOKEN):
         raise HTTPException(status_code=401, detail="Missing or wrong X-Melodi-Token")
 

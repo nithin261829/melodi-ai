@@ -1,10 +1,34 @@
-# Melodi AI
+<h1 align="center">Melodi AI</h1>
 
-**A context-aware playlist planner for the Melo app.** It turns a listener's moment (time of day, weather, whether they're driving or walking, where they are, how they feel, or a sentence like *"long drive to Vizag at night"*) into a 25-song mix of real songs, each with a one-line reason.
+<p align="center">
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.12-3776AB" />
+  <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0.162-009688" />
+  <img alt="Claude" src="https://img.shields.io/badge/LLM-Claude%20Haiku%205.5-D97757" />
+  <img alt="Tests" src="https://img.shields.io/badge/tests-pytest-0A9EDC" />
+  <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green" />
+</p>
+
+**A context-aware AI DJ.** It turns a listener's moment (time of day, weather, whether they're driving or walking, where they are, how they feel, or a sentence like *"long drive to Vizag at night"*) into a 25-song mix of real songs, each with a one-line reason.
 
 Built with **Python · FastAPI · the Anthropic SDK (Claude, structured outputs) · ytmusicapi · Pydantic**.
 
-> Part of [Melo](../README.md), a learning project. For experimentation and study only.
+> [!IMPORTANT]
+> **Built for experimentation and learning, not as a product.** I made Melodi AI to learn how to build reliable LLM features: structured outputs, keeping the model grounded in real data, cost and latency trade-offs, and testing the non-AI parts. It isn't affiliated with or endorsed by YouTube, Google or Anthropic. See the [disclaimer](#disclaimer).
+
+## Example
+
+One real request: *Wednesday 9:40 pm, light rain, 24°C, driving, Hyderabad, mood "calm", "long drive, soft melodies", favourite artists Sid Sriram, M.M. Sreelekha, Anirudh.*
+
+> **🌧️ Rain-Soft Roads Through Hyderabad Night**
+> *A gentle, rain-washed sequence that eases you through Hyderabad's late-night streets with Sid Sriram and Anirudh at its heart.*
+>
+> 1. **Maate Vinadhuga** · Sid Sriram: *gentle voice opens softly for the rainy night drive*
+> 2. **Nuvvunte Chaley** · Anirudh Ravichander: *understated melody settles the car into a calm rhythm*
+> 3. **Chuttamalle** · Shilpa Rao: *soothing vocals keep the mood warm and unhurried*
+> 4. **Chamkeela Angeelesi (Rainy Lofi)**: *lofi texture matches the light rain on the windscreen*
+> 5. … 20 songs in total, drawn from *Tollywood Romance*, *Tollywood Essentials*, *Night Drive* and others
+>
+> Claude Haiku 5.5 · 3 LLM calls · ~8K input tokens · **≈ $0.002 per mix** · 14 s
 
 ---
 
@@ -77,10 +101,16 @@ uv sync
 uv run uvicorn app.main:app --host 0.0.0.0 --port 8787
 ```
 
-Point the app at it (phone and Mac on the same Wi-Fi):
-1. In the Melo root, `cp .env.example .env` and set `EXPO_PUBLIC_MELODI_URL=http://<your Mac's name>.local:8787`. Find the name with `scutil --get LocalHostName`. A `.local` name keeps working when the router gives the Mac a new IP.
-2. Put the same random value in `MELODI_APP_TOKEN` (here) and `EXPO_PUBLIC_MELODI_TOKEN` (app), so only your app can spend your API credit. Generate one with `python3 -c "import secrets; print(secrets.token_urlsafe(24))"`.
-3. Rebuild the app. On first use, iOS asks for **Location** and **Local Network** access.
+### Using it from a phone app
+
+[`clients/react-native/`](clients/react-native) has a ready-made client for Expo/React Native apps:
+- `context.ts` senses the moment on the device: time of day and sunset, weather from Open-Meteo, whether you're walking or driving, and the city. It turns all of that into labels, so GPS coordinates never reach the server.
+- `melodiClient.ts` calls `POST /v1/plan` and returns typed tracks.
+
+Point your app at the server (phone and Mac on the same Wi-Fi):
+1. In your app, set `EXPO_PUBLIC_MELODI_URL=http://<your Mac's name>.local:8787`. Find the name with `scutil --get LocalHostName`. A `.local` name keeps working when the router gives the Mac a new IP.
+2. Put the same random value in `MELODI_APP_TOKEN` (server `.env`) and `EXPO_PUBLIC_MELODI_TOKEN` (app), so only your app can spend your API credit. Generate one with `python3 -c "import secrets; print(secrets.token_urlsafe(24))"`.
+3. Add `expo-location` to the app, with a `locationWhenInUsePermission` message and an `NSLocalNetworkUsageDescription` in `app.json`, then rebuild. On first use, iOS asks for **Location** and **Local Network** access.
 4. If the phone can't connect, the macOS Firewall is probably blocking it: System Settings → Network → Firewall → Options → allow incoming connections for `python3.12`.
 
 ## Tests
@@ -109,3 +139,15 @@ These cover the deterministic core: target cleaning, catalogue narrowing, reject
 - **🎬 Shot here:** songs from films shot in the listener's city, using Wikidata filming locations → soundtrack albums.
 - **Audio features:** on-audio mood estimates (e.g. Essentia arousal/valence, CLAP text-to-audio similarity) to check that a song really sounds calm or energetic.
 - **Tool-use agent:** expose catalogue search, candidate collection and scoring as separately defined tools so Claude can iterate when a mix looks weak.
+
+## Disclaimer
+
+**This project exists only for experimentation, learning and study.**
+- Melodi AI reads public YouTube Music catalogue pages through [ytmusicapi](https://github.com/sigma67/ytmusicapi). It is not affiliated with, endorsed by or connected to YouTube, Google or Anthropic. "YouTube Music" is a trademark of Google LLC.
+- Automated access to YouTube may conflict with YouTube's Terms of Service. Use this for learning, not for any commercial purpose or to redistribute content.
+- All music, artwork and metadata belong to their respective owners.
+- The code is provided as-is, with no warranty.
+
+## License
+
+[MIT](LICENSE), for the code in this repository only. It grants no rights to any music, artwork or other content.

@@ -1,4 +1,15 @@
+# Python
 .venv/
-.cache/
 __pycache__/
 .pytest_cache/
+
+# Catalogue cache
+.cache/
+
+# Secrets: commit only the .env.example template
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store

@@ -1,7 +1,7 @@
 [project]
 name = "melodi-ai"
 version = "0.1.0"
-description = "Melodi AI: context-aware playlist planner for the Melo app"
+description = "Melodi AI: a context-aware AI DJ that plans playlists with Claude"
 requires-python = ">=3.12"
 dependencies = [
     "anthropic>=2.3.0",
