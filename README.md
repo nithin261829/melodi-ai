@@ -13,6 +13,8 @@
 
 Tell it nothing and it still works: it knows it's 9:40 pm, raining, you're driving through Hyderabad, and you mostly listen to Sid Sriram. It comes back with 25 songs that fit, each with a one-line reason, in about 14 seconds and for about a fifth of a cent.
 
+It can plan two ways: a fixed **pipeline** where code runs the steps and the model makes three structured decisions, or an **agent** where the model calls five separately defined tools itself (search the catalogue, load playlists, add radio, rank, finish). Both pass 100% of the [lite evals](#lite-evals).
+
 > [!IMPORTANT]
 > **A learning project, not a product.** I built Melodi AI to learn how to put an LLM into a real feature without letting it make things up: structured outputs, grounding the model in real data, measuring cost and latency, and testing everything around the model. It isn't affiliated with YouTube, Google or Anthropic. See the [disclaimer](#disclaimer).
 
