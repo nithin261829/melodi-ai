@@ -119,6 +119,18 @@ A song three editors agreed on beats one by a favourite artist that only two agr
 
 **In agent mode** the steps are the same tools, but the model decides when to use them. In one run it searched, loaded 6 playlists, searched again for Sid Sriram and soundtracks, loaded 2 more (521 songs), then ranked and finished.
 
+## How it uses YouTube Music
+
+There's no official YouTube Music API, so the server uses [`ytmusicapi`](https://github.com/sigma67/ytmusicapi), an open-source Python library that reads the same internal API the YouTube Music website uses. No API key, no cost.
+
+| What the server reads | When |
+|---|---|
+| The Moods & genres catalogue (3,364 curated playlists across 39 categories) | Once a day per country, then cached |
+| The songs in the chosen playlists | Every mix (6–8 playlists, in parallel) |
+| YouTube radio for a song | When seeding from a song you liked, or when the agent calls `get_radio` |
+
+It only reads **song lists and details** (titles, artists, video IDs). It never touches audio: the phone plays the songs itself through the [Melo](https://github.com/nithin261829/melo) app. The trade-off is that the library is unofficial and YouTube can change its pages at any time. It already happened once: one category page made `ytmusicapi` crash, so the catalogue loader uses my own tolerant parser. If a playlist fails to load, the mix carries on without it.
+
 ## How it's built
 
 - **A catalogue I could trust.** Instead of free-text search, Melodi reads YouTube Music's 3,364 editor-curated Moods & genres playlists, each labelled by mood and language (for example *Sad › Bollywood sad*). `ytmusicapi` crashed on some of those pages, so I wrote my own tolerant parser, load the 39 categories in parallel, and cache them per country for 24 hours.
