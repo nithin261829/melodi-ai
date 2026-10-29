@@ -109,7 +109,7 @@ The real top of that list:
 | Song | In lists | Score |
 |---|---|---|
 | Chikiri Chikiri (Tamil) · A.R. Rahman | 3 | 6 + 0.47 = **6.47** |
-| Gundellonaa · Leon James, Anirudh | 2 | 4 + 0.49 + 1.5 (Anirudh) = **5.99** |
+| Gundellonaa · Leon James, Anirudh | 2 | 4 + 0.50 + 1.5 (Anirudh) = **6.00** |
 | Kalaavathi · Thaman S, Sid Sriram | 2 | 4 + 0.46 + 1.5 (Sid Sriram) = **5.96** |
 | Urike Urike · M.M. Sreelekha, Sid Sriram | 2 | 4 + 0.43 + 1.5 = **5.93** |
 
