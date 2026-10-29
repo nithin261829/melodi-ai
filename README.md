@@ -5,7 +5,7 @@
   <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0.162-009688" />
   <img alt="Anthropic SDK" src="https://img.shields.io/badge/Anthropic%20SDK-2.3-D97757" />
   <img alt="Claude" src="https://img.shields.io/badge/LLM-Claude%20Haiku%205.5-D97757" />
-  <img alt="Tests" src="https://img.shields.io/badge/tests-9%20passing-0A9EDC" />
+  <img alt="Tests" src="https://img.shields.io/badge/tests-17%20passing-0A9EDC" />
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green" />
 </p>
 
@@ -26,14 +26,15 @@ Tell it nothing and it still works: it knows it's 9:40 pm, raining, you're drivi
 2. [At a glance](#at-a-glance)
 3. [How Melodi picks songs](#how-melodi-picks-songs)
 4. [The three Claude calls](#the-three-claude-calls)
-5. [What I built](#what-i-built)
-6. [Design decisions and trade-offs](#design-decisions-and-trade-offs)
-7. [Measured results](#measured-results)
-8. [Testing](#testing)
-9. [Security and privacy](#security-and-privacy)
-10. [Limitations](#limitations)
-11. [Run it](#run-it)
-12. [Roadmap](#roadmap)
+5. [Agent mode: tool calling](#agent-mode-tool-calling)
+6. [What I built](#what-i-built)
+7. [Design decisions and trade-offs](#design-decisions-and-trade-offs)
+8. [Measured results](#measured-results)
+9. [Testing](#testing)
+10. [Security and privacy](#security-and-privacy)
+11. [Limitations](#limitations)
+12. [Run it](#run-it)
+13. [Roadmap](#roadmap)
 
 ---
 
@@ -62,12 +63,12 @@ A real request: *Wednesday 9:40 pm · light rain, 24°C · driving · Hyderabad 
 | **LLM** | Claude Haiku 5.5 (default). Claude Opus 5.5 and Sonnet 5.5 work through one setting, `MELODI_MODEL`. |
 | **SDK** | Anthropic Python SDK 2.3 (`anthropic`), Messages API |
 | **Claude features used** | Structured outputs into Pydantic models (`client.beta.messages.parse(output_format=...)`), `effort` control, server-side refusal fallbacks on models that support them |
-| **LLM tool calling** | Not used, on purpose. Code drives the pipeline, and Claude makes three bounded decisions ([why](#why-not-an-agent-with-tool-calling)). |
+| **Two modes** | **Pipeline** (default): code runs six fixed steps and Claude makes three structured decisions. **Agent**: Claude calls five tools itself, each defined with its own strict JSON schema ([details](#agent-mode-tool-calling)). |
 | **Song source** | YouTube Music's editor-curated **Moods & genres** playlists (3,364 of them) and radio, read through `ytmusicapi` |
 | **Backend** | FastAPI, Pydantic v2, uvicorn, managed with `uv` |
 | **Client** | React Native / Expo ([`clients/react-native`](clients/react-native)), used by the [Melo](https://github.com/nithin261829/melo) iPhone app |
 | **Cost / speed** | ~$0.002 and ~14 s per mix on Haiku. Opus 5.5 was ~$0.05 and ~20 s ([measured](#measured-results)). |
-| **Tests** | 9 pytest unit tests covering everything that isn't the LLM |
+| **Tests** | 17 pytest unit tests covering everything that isn't the LLM, including every tool |
 
 ---
 
@@ -149,18 +150,79 @@ Every response also returns `usage` (model, input and output tokens, number of L
 
 ---
 
+## Agent mode: tool calling
+
+In agent mode, Claude doesn't follow fixed steps. It gets the moment and five tools, and decides for itself what to search, what to load and when the mix is ready. Ask for it per request with `"mode": "agent"`, or make it the default with `MELODI_MODE=agent`.
+
+Each tool is defined separately in [`app/tools.py`](app/tools.py) with a name, a description Claude reads, and a strict JSON input schema (`"strict": true`, so the API guarantees inputs match the schema):
+
+| Tool | Input | What it does |
+|---|---|---|
+| `search_catalog` | categories, keywords | Searches the 3,364 curated playlists and returns up to 60, numbered |
+| `get_playlist_tracks` | playlist numbers | Loads the real songs into the candidate pool (at most 8 playlists per mix) |
+| `get_radio` | candidate number | Adds YouTube radio for a song that captures the vibe |
+| `rank_candidates` | limit | Runs the tested scoring and returns the top songs, numbered |
+| `finish_mix` | title, description, ordered picks with reasons | Submits the mix; code checks every number |
+
+```json
+{
+  "name": "get_playlist_tracks",
+  "description": "Load the real songs from playlists returned by search_catalog into the candidate pool. At most 8 playlists in total per mix. Returns how many songs each playlist added.",
+  "strict": true,
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "playlist_numbers": {"type": "array", "items": {"type": "integer"}, "description": "Playlist numbers exactly as shown by search_catalog"}
+    },
+    "required": ["playlist_numbers"],
+    "additionalProperties": false
+  }
+}
+```
+
+**Guardrails.** Tools only accept numbers they handed out earlier. A playlist number that never appeared in a search, or a candidate that was never ranked, comes back as an error result, so Claude corrects itself. The loop in [`app/agent.py`](app/agent.py) stops after 10 rounds. If the agent fails, runs out of rounds or never calls `finish_mix`, the server quietly runs the pipeline instead and says why in `fallback_reason`, so the app always gets a mix. Every tool call is returned in the response's `trace`.
+
+I wrote the loop by hand rather than using the SDK's beta tool runner, because it needs to cap rounds, record the trace and fall back on failure. All tool results from one round go back in a single message, as the API expects.
+
+**A real run** (the same rainy-night request as above). Claude searched, then searched again to get closer to the listener's taste:
+
+| # | Tool call | Result |
+|---|---|---|
+| 1 | `search_catalog` Chill, Bollywood & Indian, Commute + Telugu, Tamil… | 60 playlists |
+| 2 | `get_playlist_tracks` 6 playlists | 386 songs |
+| 3 | `search_catalog` Indie & alternative, Soundtracks + Sid Sriram… | 60 playlists |
+| 4 | `get_playlist_tracks` 2 more playlists | 521 songs |
+| 5 | `rank_candidates` 40 | top 40 of 521 |
+| 6 | `finish_mix` *"Rain-Soft Telugu Night Drive"*, 20 songs | accepted |
+
+**Pipeline or agent?**
+
+| Same request, Claude Haiku 5.5 | Pipeline | Agent |
+|---|---|---|
+| Model calls | 3 | 4 rounds, 6 tool calls |
+| Input / output tokens | 8,090 / 1,986 | 20,098 / 2,430 |
+| Cost per mix | ~$0.0018 | ~$0.0032 |
+| Time | 14 s | 27 s |
+| Playlists used | 6 | 8 |
+
+Both mixes were calm Telugu and Tamil melodies built around Sid Sriram and Anirudh, with 4 songs in common. The agent is more flexible: it can rethink its search when the first results don't fit. It also costs about twice as much and takes twice as long, because every round resends the conversation. So the pipeline stays the default, and the agent is there for open-ended requests and for comparison. One run on each side isn't enough to say which picks better songs; that's what the evals on the roadmap are for.
+
+---
+
 ## What I built
 
 | Component | File | What it does |
 |---|---|---|
 | **HTTP API** | `app/main.py` | `POST /v1/plan` and `GET /health`; app-token check; maps failures to clear HTTP errors (401, 422, 503) |
 | **Pipeline** | `app/planner.py` | Runs the six steps and holds the three prompts |
+| **Agent loop** | `app/agent.py` | Tool-calling loop: 10-round cap, trace, fallback to the pipeline |
+| **Tools** | `app/tools.py` | Five tool definitions (strict JSON schemas) and the code that runs them |
 | **LLM gateway** | `app/llm.py` | The only place that calls Claude: structured output, effort, fallbacks, usage accounting |
 | **Catalogue loader** | `app/catalog.py` | Reads all 39 Moods & genres pages concurrently, with my own parser (ytmusicapi's crashes on mixed pages), and caches per country for 24 h |
 | **Candidate collector and scorer** | `app/candidates.py` | Loads playlists and radio in parallel, merges duplicate uploads, scores and trims |
 | **Schemas** | `app/models.py` | Request, response and the three structured-output models |
 | **Phone client** | `clients/react-native/` | Turns location into labels on the device (`context.ts`) and calls the API (`melodiClient.ts`) |
-| **Tests** | `tests/test_pipeline.py` | 9 offline unit tests |
+| **Tests** | `tests/test_pipeline.py`, `tests/test_tools.py` | 17 offline unit tests |
 
 ---
 
@@ -174,8 +236,11 @@ It invents songs that don't exist, and it can't know what's on YouTube today. Pl
 **Why YouTube Music's curated playlists?**
 They're picked by human editors and labelled by mood *and* language (for example *Sad › Bollywood sad*). That label is reliable signal I don't have to compute. Spotify's audio-features and recommendations APIs would have been the obvious alternative, but they've been closed to new apps since November 2024.
 
-<a id="why-not-an-agent-with-tool-calling"></a>**Why not an agent with tool calling, or LangChain?**
-I started out wanting LangChain. But the workflow here is fixed: every request goes through the same six steps. An agent deciding which tool to call adds round trips, cost and unpredictability without improving the result. So code orchestrates, and Claude makes three bounded decisions with typed outputs. That's simpler to test and to debug. A tool-use version is on the [roadmap](#roadmap), for the case where Claude should retry when a mix looks weak.
+<a id="why-not-an-agent-with-tool-calling"></a>**Why build both a pipeline and an agent? Why not LangChain?**
+I started out wanting LangChain, but the Anthropic SDK already covers everything here (structured outputs, tool definitions, the tool loop), so a framework would only add a layer. For most requests the workflow is fixed, and a pipeline is cheaper, faster and easier to test. An agent is better when the first search doesn't fit and needs rethinking. Building both on the same tools lets me compare them on the same requests instead of guessing ([results](#agent-mode-tool-calling)).
+
+**Why isn't the weather a tool?**
+The phone already knows the weather and sends it as a label. A `get_weather` tool would add a round trip and need the location, which the server deliberately never receives.
 
 **Why three calls instead of one big prompt?**
 Step 3 depends on step 2's shortlist, and step 6 depends on real songs that only exist after step 4. Splitting it also keeps each prompt small (~2–4K tokens) instead of putting 3,364 playlists into one request (~40K tokens).
@@ -207,7 +272,7 @@ Both mixes were calm Telugu and Tamil melodies centred on Sid Sriram and Anirudh
 ## Testing
 
 ```bash
-uv run pytest      # 9 passed
+uv run pytest      # 17 passed
 ```
 
 The tests cover everything around the model, where most real bugs live:
@@ -220,6 +285,8 @@ The tests cover everything around the model, where most real bugs live:
 - Different uploads of the same song merge into one, keeping the official audio
 - A song is skipped if *any* version of it was played recently
 - The final order keeps Claude's valid picks and tops up when there are too few
+- Every tool definition is a strict, closed JSON schema
+- Tools refuse playlist and candidate numbers they never handed out, enforce the 8-playlist limit, and require the right order (search, load, rank, finish)
 
 Live runs are checked by hand: real songs, no duplicates, and the reasons match the songs. Automated LLM evals are next on the [roadmap](#roadmap).
 
@@ -243,7 +310,8 @@ Honest notes on what doesn't work yet:
 - **Off-language songs can slip in** from mixed playlists (for example an English song from *Night Drive*).
 - **It depends on an unofficial client.** `ytmusicapi` can break when YouTube changes its pages. I already had to work around one crash.
 - **It runs on a local server,** so the phone needs to be on the same Wi-Fi. It isn't deployed.
-- **There are no automated quality evals yet.** Quality is checked by hand.
+- **Reasons aren't fact-checked.** The songs are always real, but a reason can contain an unchecked claim. In one agent run Claude called a song "Anirudh-produced" when the listed artists were Anudeep Dev and Krishna Kanth.
+- **There are no automated quality evals yet.** Quality is checked by hand, one run at a time.
 
 ---
 
@@ -263,6 +331,7 @@ uv run uvicorn app.main:app --host 0.0.0.0 --port 8787
 ```json
 {
   "size": 25,
+  "mode": "pipeline",
   "context": {
     "local_time": "2026-10-28T21:40:00+05:30",
     "daypart": "night",
@@ -277,7 +346,7 @@ uv run uvicorn app.main:app --host 0.0.0.0 --port 8787
 }
 ```
 
-The response has `title`, `description`, `target`, `sources` (the curated playlists used), `tracks` (each with `why`) and `usage`.
+`mode` is optional (`"pipeline"` or `"agent"`). The response has `title`, `description`, `sources` (the curated playlists used), `tracks` (each with `why`), `usage`, `mode`, and in agent mode a `trace` of every tool call (plus `fallback_reason` if it fell back to the pipeline).
 
 **Connecting a phone app** (phone and Mac on the same Wi-Fi):
 1. Set `EXPO_PUBLIC_MELODI_URL=http://<Mac name>.local:8787` in the app. Find the name with `scutil --get LocalHostName`; a `.local` name survives IP changes.
@@ -291,7 +360,6 @@ The response has `title`, `description`, `target`, `sources` (the curated playli
 
 - **Evals:** a set of scenarios ("rainy night, sad, Telugu", "gym, hype, English") scored by rules plus an LLM judge, run in CI.
 - **Audio features:** measure how calm or energetic a song really sounds (Essentia arousal/valence, CLAP text-to-audio), so energy can count in the score.
-- **Tool-use agent:** expose catalogue search, collection and scoring as tools so Claude can retry when a mix looks weak.
 - **Learned scoring:** tune the weights from likes and skips.
 - **🎬 Shot here:** songs from films shot in your city, using Wikidata filming locations and soundtrack albums.
 - **Deploy** so it works away from home Wi-Fi.
