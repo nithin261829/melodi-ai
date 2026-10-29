@@ -22,33 +22,33 @@ It can plan two ways: a fixed **pipeline** where code runs the steps and the mod
 
 ```text
 Melo app (iPhone · React Native)
-  │  context labels: time · weather · driving/walking · city · mood · description · top artists   (no GPS)
+  │  labels only: time · weather · walking/driving · city
+  │               mood · description · top artists   (no GPS)
   ▼
-FastAPI service (Python) ── POST /v1/plan · app-token check · Pydantic validation
+FastAPI service (Python)
+  │  POST /v1/plan · app token · Pydantic validation
   │
-  ├─ mode = "pipeline"  (default · ~$0.0014 · ~12 s)
-  │    1. Understand  ── LLM, structured output → MusicTarget (moods, keywords, languages, energy)
-  │    2. Narrow      ── code: 3,364 curated playlists → ~150
-  │    3. Pick        ── LLM, structured output → PlaylistPicks (3–6 numbers, checked by code)
-  │    4. Collect     ── code: real songs + radio from your liked songs
-  │    5. Score       ── code: merge duplicates · rank · ≤3 per artist · top 40
-  │    6. Sequence    ── LLM, structured output → MixPlan (order, title, a reason per song)
+  ├─ mode "pipeline"   default · ~$0.0014 · ~12 s
+  │    1 Understand  LLM → moods, keywords, languages, energy
+  │    2 Narrow      code: 3,364 playlists → ~150
+  │    3 Pick        LLM → 3–6 playlist numbers (checked)
+  │    4 Collect     code: real songs + radio from likes
+  │    5 Score       code: merge, rank, ≤3/artist, top 40
+  │    6 Sequence    LLM → order, title, reason per song
   │
-  ├─ mode = "agent"  (Anthropic SDK · tool use · ~$0.0030 · ~14 s)
-  │    agent loop (max 10 rounds · every tool call traced · falls back to the pipeline on failure)
-  │     ├─ tool: search_catalog(categories, keywords)        → curated playlists, numbered
-  │     ├─ tool: get_playlist_tracks(playlist_numbers)       → real songs into the pool (≤8 playlists)
-  │     ├─ tool: get_radio(candidate_number)                 → YouTube radio for one song
-  │     ├─ tool: rank_candidates(limit)                      → the same tested scoring as the pipeline
-  │     └─ tool: finish_mix(title, description, picks)       → the final mix, every number checked
+  ├─ mode "agent"   Anthropic SDK tool use · ~$0.0030 · ~14 s
+  │    loop: max 10 rounds · traced · pipeline fallback
+  │     ├─ tool: search_catalog(categories, keywords)
+  │     ├─ tool: get_playlist_tracks(playlist_numbers)
+  │     ├─ tool: get_radio(candidate_number)
+  │     ├─ tool: rank_candidates(limit)
+  │     └─ tool: finish_mix(title, description, picks)
   │
-  ├─ both modes: never the same artist twice in a row · only real songs · refusal fallback on larger models
-  │
-  ├─ YouTube Music (ytmusicapi) ── Moods & genres catalogue (cached 24 h per country) · playlists · radio
-  ├─ Claude API (Anthropic SDK 2.3) ── Claude Haiku 5.5 by default · effort "low"
-  └─ Lite evals ── 12 scenarios × 2 modes · rule checks only (no LLM judge) · 102/102 passing in each mode
+  ├─ YouTube Music   curated playlists · tracks · radio
+  ├─ Claude API      Claude Haiku 5.5 · structured outputs
+  └─ Lite evals      12 scenarios × 2 modes · 102/102 each
   ▼
-Response: 25 songs (each with a reason) · sources · usage (tokens, cost, time) · agent trace
+Response: 25 songs + reasons · sources · usage · trace
 ```
 
 ---
