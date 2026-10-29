@@ -11,13 +11,13 @@ from fastapi import Depends, FastAPI, Header, HTTPException
 
 load_dotenv()
 
-from . import llm  # noqa: E402  (reads MELODI_MODEL / MELODI_EFFORT after .env is loaded)
+from . import agent, llm, planner  # noqa: E402  (reads MELODI_MODEL / MELODI_EFFORT after .env is loaded)
 from .models import PlanRequest, PlanResponse  # noqa: E402
-from .planner import plan  # noqa: E402
 
 app = FastAPI(title="Melodi AI", version="0.1.0")
 
 APP_TOKEN = os.environ.get("MELODI_APP_TOKEN", "")
+DEFAULT_MODE = os.environ.get("MELODI_MODE", "pipeline")  # "pipeline" or "agent"
 
 
 def require_app_token(x_melodi_token: str = Header(default="")) -> None:
@@ -28,7 +28,7 @@ def require_app_token(x_melodi_token: str = Header(default="")) -> None:
 
 @app.get("/health")
 def health() -> dict[str, str]:
-    return {"status": "ok", "model": llm.MODEL}
+    return {"status": "ok", "model": llm.MODEL, "mode": DEFAULT_MODE}
 
 
 @app.post("/v1/plan", response_model=PlanResponse, dependencies=[Depends(require_app_token)])
@@ -45,3 +45,15 @@ def create_plan(request: PlanRequest) -> PlanResponse:
         raise HTTPException(status_code=503, detail="AI is busy, try again in a moment") from e
     except anthropic.APIConnectionError as e:
         raise HTTPException(status_code=503, detail="Could not reach the AI service") from e
+
+
+def plan(request: PlanRequest) -> PlanResponse:
+    """Agent mode when asked for; the fixed pipeline otherwise, and whenever the agent fails."""
+    if (request.mode or DEFAULT_MODE) != "agent":
+        return planner.plan(request)
+    try:
+        return agent.plan(request)
+    except (agent.AgentFailed, llm.LLMRefused, anthropic.BadRequestError) as e:
+        result = planner.plan(request)
+        result.fallback_reason = f"Agent failed, used the pipeline: {e}"
+        return result

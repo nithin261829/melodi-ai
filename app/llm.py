@@ -60,3 +60,24 @@ def ask(system: str, prompt: str, schema: type[T], usage: Usage) -> T:
     if response.stop_reason == "refusal" or response.parsed_output is None:
         raise LLMRefused(f"Claude did not return a plan (stop_reason={response.stop_reason})")
     return response.parsed_output
+
+
+def turn(system: str, messages: list, tools: list[dict], usage: Usage):
+    """One round of a tool-using conversation; the caller runs any tools Claude asks for."""
+    fallback = {"betas": ["server-side-fallback-2026-07-01"], "fallbacks": "default"} if MODEL in FALLBACK_MODELS else {}
+    response = client().beta.messages.create(
+        model=MODEL,
+        max_tokens=16000,
+        system=system,
+        messages=messages,
+        tools=tools,
+        output_config={"effort": EFFORT},
+        **fallback,
+    )
+    usage.model = response.model
+    usage.input_tokens += response.usage.input_tokens
+    usage.output_tokens += response.usage.output_tokens
+    usage.llm_calls += 1
+    if response.stop_reason == "refusal":
+        raise LLMRefused("Claude declined to continue (stop_reason=refusal)")
+    return response

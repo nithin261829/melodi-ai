@@ -35,6 +35,7 @@ class ListeningContext(BaseModel):
 class PlanRequest(BaseModel):
     context: ListeningContext
     size: int = Field(25, ge=10, le=50)
+    mode: Literal["pipeline", "agent"] | None = Field(None, description="None uses the server default (MELODI_MODE)")
 
 
 # ---- Structured outputs from Claude ---------------------------------------------------------
@@ -90,6 +91,15 @@ class SourcePlaylist(BaseModel):
     category: str
 
 
+class ToolCall(BaseModel):
+    """One step of the agent's run, returned so every mix can be audited."""
+
+    tool: str
+    input: dict
+    result: str  # first line of what the tool returned
+    ms: int
+
+
 class Usage(BaseModel):
     model: str
     input_tokens: int = 0
@@ -101,7 +111,10 @@ class Usage(BaseModel):
 class PlanResponse(BaseModel):
     title: str
     description: str
-    target: MusicTarget
+    target: MusicTarget | None = None  # the pipeline's step-1 output; the agent reasons without it
     sources: list[SourcePlaylist]
     tracks: list[PlannedTrack]
     usage: Usage
+    mode: Literal["pipeline", "agent"] = "pipeline"
+    trace: list[ToolCall] = Field(default_factory=list)  # agent mode: every tool call in order
+    fallback_reason: str | None = None  # set when agent mode fell back to the pipeline

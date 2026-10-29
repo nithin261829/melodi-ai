@@ -41,27 +41,41 @@ class Candidate:
 def collect(yt: YTMusic, picks: list[CatalogPlaylist], taste: Taste) -> dict[str, Candidate]:
     """Songs from the curated playlists, plus radio seeded by liked songs that fit the mood."""
     pool: dict[str, Candidate] = {}
+    add_playlists(yt, pool, picks)
+    # A liked song that also sits in today's curated lists is a seed that fits both mood and taste.
+    liked = set(taste.liked_video_ids)
+    seeds = [vid for vid, c in sorted(pool.items(), key=lambda kv: kv[1].best_position) if vid in liked][:MAX_RADIO_SEEDS]
+    add_radio(yt, pool, seeds)
+    return pool
 
+
+def add_playlists(yt: YTMusic, pool: dict[str, Candidate], picks: list[CatalogPlaylist]) -> dict[str, int]:
+    """Loads the playlists' tracks into the pool; returns how many tracks each playlist gave."""
     with ThreadPoolExecutor(max_workers=6) as pool_exec:
         playlists = list(pool_exec.map(lambda p: _safe(lambda: yt.get_playlist(p.playlist_id, limit=PLAYLIST_LIMIT)), picks))
+    loaded: dict[str, int] = {}
     for pick, playlist in zip(picks, playlists):
-        for position, track in enumerate((playlist or {}).get("tracks", [])):
+        tracks = (playlist or {}).get("tracks", [])
+        loaded[pick.playlist_id] = len(tracks)
+        for position, track in enumerate(tracks):
             candidate = _add(pool, track)
             if candidate:
                 candidate.playlists.add(pick.playlist_id)
                 candidate.best_position = min(candidate.best_position, position)
+    return loaded
 
-    # A liked song that also sits in today's curated lists is a seed that fits both mood and taste.
-    liked = set(taste.liked_video_ids)
-    seeds = [vid for vid, c in sorted(pool.items(), key=lambda kv: kv[1].best_position) if vid in liked][:MAX_RADIO_SEEDS]
-    with ThreadPoolExecutor(max_workers=MAX_RADIO_SEEDS or 1) as pool_exec:
+
+def add_radio(yt: YTMusic, pool: dict[str, Candidate], seeds: list[str]) -> int:
+    """Adds YouTube radio seeded by each video ID; returns how many new songs joined the pool."""
+    before = len(pool)
+    with ThreadPoolExecutor(max_workers=max(len(seeds), 1)) as pool_exec:
         radios = list(pool_exec.map(lambda v: _safe(lambda: yt.get_watch_playlist(videoId=v, radio=True, limit=RADIO_LIMIT)), seeds))
     for radio in radios:
         for track in (radio or {}).get("tracks", [])[1:]:  # first item is the seed itself
             candidate = _add(pool, track)
             if candidate:
                 candidate.from_your_radio = True
-    return pool
+    return len(pool) - before
 
 
 def rank(pool: dict[str, Candidate], taste: Taste, keep: int) -> list[Candidate]:
