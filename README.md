@@ -205,7 +205,7 @@ I wrote the loop by hand rather than using the SDK's beta tool runner, because i
 | Time | 14 s | 27 s |
 | Playlists used | 6 | 8 |
 
-Both mixes were calm Telugu and Tamil melodies built around Sid Sriram and Anirudh, with 4 songs in common. The agent is more flexible: it can rethink its search when the first results don't fit. It also costs about twice as much and takes twice as long, because every round resends the conversation. So the pipeline stays the default, and the agent is there for open-ended requests and for comparison. One run on each side isn't enough to say which picks better songs; that's what the evals on the roadmap are for.
+Both mixes were calm Telugu and Tamil melodies built around Sid Sriram and Anirudh, with 4 songs in common. The agent is more flexible: it can rethink its search when the first results don't fit. It also costs about twice as much and takes twice as long, because every round resends the conversation. So the pipeline stays the default, and the agent is there for open-ended requests and for comparison. One run on each side isn't enough to say which one picks better songs.
 
 ---
 
@@ -288,7 +288,7 @@ The tests cover everything around the model, where most real bugs live:
 - Every tool definition is a strict, closed JSON schema
 - Tools refuse playlist and candidate numbers they never handed out, enforce the 8-playlist limit, and require the right order (search, load, rank, finish)
 
-Live runs are checked by hand: real songs, no duplicates, and the reasons match the songs. Automated LLM evals are next on the [roadmap](#roadmap).
+Live runs are checked by hand: real songs, no duplicates, and the reasons match the songs.
 
 ---
 
@@ -311,7 +311,7 @@ Honest notes on what doesn't work yet:
 - **It depends on an unofficial client.** `ytmusicapi` can break when YouTube changes its pages. I already had to work around one crash.
 - **It runs on a local server,** so the phone needs to be on the same Wi-Fi. It isn't deployed.
 - **Reasons aren't fact-checked.** The songs are always real, but a reason can contain an unchecked claim. In one agent run Claude called a song "Anirudh-produced" when the listed artists were Anudeep Dev and Krishna Kanth.
-- **There are no automated quality evals yet.** Quality is checked by hand, one run at a time.
+- **Quality is checked by hand,** one run at a time.
 
 ---
 
@@ -358,7 +358,6 @@ uv run uvicorn app.main:app --host 0.0.0.0 --port 8787
 
 ## Roadmap
 
-- **Evals:** a set of scenarios ("rainy night, sad, Telugu", "gym, hype, English") scored by rules plus an LLM judge, run in CI.
 - **Audio features:** measure how calm or energetic a song really sounds (Essentia arousal/valence, CLAP text-to-audio), so energy can count in the score.
 - **Learned scoring:** tune the weights from likes and skips.
 - **🎬 Shot here:** songs from films shot in your city, using Wikidata filming locations and soundtrack albums.
