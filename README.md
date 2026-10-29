@@ -8,8 +8,8 @@ Python · FastAPI · Anthropic SDK (Claude Haiku 5.5) · tool calling · structu
 
 ## Example
 
-**Input:** 9:40 pm · light rain · driving · Hyderabad · mood "calm" · likes Sid Sriram
-**Output:** *Rain-Soft Roads Through Hyderabad Night*, 20 calm Telugu songs, ~$0.002, 14 s
+- **Input:** 9:40 pm · light rain · driving · Hyderabad · mood "calm" · likes Sid Sriram
+- **Output:** *Rain-Soft Roads Through Hyderabad Night*, 20 calm Telugu songs, ~$0.002, 14 s
 
 ```
 1. Maate Vinadhuga · Sid Sriram       gentle voice opens softly for the rainy drive
