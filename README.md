@@ -43,6 +43,35 @@ FastAPI service
 
 The model only ever picks numbers from lists the code gives it, and code checks every one, so it can't invent songs.
 
+## How it reads the mood and vibe
+
+Melodi doesn't listen to the audio. It reads the *moment*, turns it into a musical target, then finds songs that human editors have already labelled with that mood.
+
+**1. Signals from the phone**, strongest first:
+
+| Signal | Example | What it changes |
+|---|---|---|
+| What you type | "upbeat Bollywood dance songs" | Overrides everything else |
+| Mood you tap | Calm · Happy · Romantic · Sad · Hype · Focus | The main feeling |
+| Weather, time, activity | light rain · 9:40 pm · driving | Energy: rain and late night go softer, gym and mornings go brighter |
+| Favourite artists | Sid Sriram, Anirudh | Language and style; beats the city's local language |
+| Sunset | "golden hour" when sunset is within an hour | Adds a time-of-day feel |
+
+**2. The target.** The model turns those signals into a small form: mood categories (from YouTube Music's 39), title keywords, languages, **energy** (0 calm → 1 intense) and **valence** (0 sad → 1 happy). Energy and valence are the two axes music-emotion research uses to describe how a song feels. Real readings from the eval runs:
+
+| The moment | Energy | Valence | Playlists it chose |
+|---|---|---|---|
+| Rainy night, driving, calm, Telugu listener | 0.30 | 0.55 | Night Drive, Tollywood Essentials |
+| Late night, mood "sad", Telugu listener | 0.20 | 0.25 | Tollywood Romance, Bollywood Melancholy |
+| Evening, "gym workout, heavy energy" | 0.90 | 0.70 | Aggro Rock & Rap for Lifting, Classic Rock Workout |
+| Late night, "help me fall asleep" | 0.10 | 0.50 | Deep Sleep Meditation, Classical for Sleeping |
+| Heavy rain, but "upbeat Bollywood dance songs" | 0.75 | 0.80 | Bollywood Party, Bollywood Dance Essentials |
+| New user, overcast evening, no mood or history | 0.30 | 0.40 | Mellow Indie, Acoustic Singer-Songwriters |
+
+**3. Finding the vibe.** The target picks curated playlists whose editors already labelled the mood (*Sad › Bollywood sad*, *Commute › Night drive*). A song that several of those playlists agree on scores highest, so the vibe comes from people who listened to the songs, not from guessing. Finally the model orders the mix to ease in and keep the energy smooth.
+
+**Limit:** energy and valence steer which playlists are chosen and the order, but the score can't measure how a song actually sounds. Audio analysis is on the list for later.
+
 ## How it's built
 
 - **A catalogue I could trust.** Instead of free-text search, Melodi reads YouTube Music's 3,364 editor-curated Moods & genres playlists, each labelled by mood and language (for example *Sad › Bollywood sad*). `ytmusicapi` crashed on some of those pages, so I wrote my own tolerant parser, load the 39 categories in parallel, and cache them per country for 24 hours.
