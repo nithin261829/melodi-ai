@@ -1,0 +1,62 @@
+[
+  {
+    "id": "rainy-night-drive-telugu",
+    "context": {"local_time": "2026-10-28T21:40:00+05:30", "daypart": "night", "weather": "light rain, 24°C", "activity": "driving", "city": "Hyderabad", "country_code": "IN", "mood": "calm", "taste": {"top_artists": ["Sid Sriram", "M.M. Sreelekha", "Anirudh Ravichander"]}},
+    "expect": {"categories": ["Chill", "Romance", "Commute", "Sad", "Bollywood & Indian"], "language_words": ["Telugu", "Tollywood"]}
+  },
+  {
+    "id": "sad-night-telugu",
+    "context": {"local_time": "2026-10-28T23:30:00+05:30", "daypart": "night", "weather": "clear sky, 21°C", "activity": "still", "city": "Vijayawada", "country_code": "IN", "mood": "sad", "taste": {"top_artists": ["Sid Sriram", "Thaman S", "Devi Sri Prasad"]}},
+    "expect": {"categories": ["Sad", "Romance"], "language_words": ["Telugu", "Tollywood"]}
+  },
+  {
+    "id": "gym-hype-english",
+    "context": {"local_time": "2026-10-28T17:30:00-04:00", "daypart": "evening", "weather": "partly cloudy, 18°C", "activity": "still", "city": "Chicago", "country_code": "US", "mood": "hype", "description": "gym workout, heavy energy", "taste": {"top_artists": ["Eminem", "Imagine Dragons", "The Weeknd"]}},
+    "expect": {"categories": ["Workout", "Energize", "Hip-hop", "Rock", "Party"], "language_words": []}
+  },
+  {
+    "id": "focus-study",
+    "context": {"local_time": "2026-10-28T10:00:00-04:00", "daypart": "morning", "weather": "overcast, 15°C", "activity": "still", "city": "Boston", "country_code": "US", "mood": "focus", "description": "studying for an exam, calm instrumental", "taste": {"top_artists": ["Ludovico Einaudi", "Joji"]}},
+    "expect": {"categories": ["Focus", "Chill", "Classical", "Jazz"], "language_words": []}
+  },
+  {
+    "id": "fall-asleep",
+    "context": {"local_time": "2026-10-28T01:15:00-04:00", "daypart": "late night", "weather": "clear sky, 9°C", "activity": "still", "city": "Toronto", "country_code": "CA", "mood": "calm", "description": "help me fall asleep", "taste": {"top_artists": []}},
+    "expect": {"categories": ["Sleep", "Chill", "Classical", "Focus"], "language_words": []}
+  },
+  {
+    "id": "romantic-evening-hindi",
+    "context": {"local_time": "2026-10-28T19:30:00+05:30", "daypart": "evening", "weather": "clear sky, 27°C", "activity": "still", "city": "Mumbai", "country_code": "IN", "mood": "romantic", "taste": {"top_artists": ["Arijit Singh", "Shreya Ghoshal", "Pritam"]}},
+    "expect": {"categories": ["Romance", "Bollywood & Indian"], "language_words": ["Bollywood", "Hindi"]}
+  },
+  {
+    "id": "tamil-house-party",
+    "context": {"local_time": "2026-10-28T22:00:00+05:30", "daypart": "night", "weather": "clear sky, 28°C", "activity": "still", "city": "Chennai", "country_code": "IN", "mood": "hype", "description": "house party with friends", "taste": {"top_artists": ["Anirudh Ravichander", "Yuvan Shankar Raja"]}},
+    "expect": {"categories": ["Party", "Energize", "Dance & electronic", "Bollywood & Indian"], "language_words": ["Kollywood", "Tamil"]}
+  },
+  {
+    "id": "kpop-morning-walk",
+    "context": {"local_time": "2026-10-28T08:15:00-07:00", "daypart": "morning", "weather": "clear sky, 16°C", "activity": "walking", "city": "Los Angeles", "country_code": "US", "mood": "happy", "taste": {"top_artists": ["BTS", "NewJeans", "TWICE"]}},
+    "expect": {"categories": ["K-Pop", "Commute", "Feel good", "Pop"], "language_words": ["K-Pop"]}
+  },
+  {
+    "id": "punjabi-road-trip",
+    "context": {"local_time": "2026-10-28T14:00:00+05:30", "daypart": "afternoon", "weather": "clear sky, 30°C", "activity": "driving", "city": "Chandigarh", "country_code": "IN", "mood": "happy", "description": "road trip with friends", "taste": {"top_artists": ["Diljit Dosanjh", "AP Dhillon", "Karan Aujla"]}},
+    "expect": {"categories": ["Commute", "Party", "Feel good", "Bollywood & Indian"], "language_words": ["Punjabi"]}
+  },
+  {
+    "id": "sunny-morning-english",
+    "context": {"local_time": "2026-10-28T09:00:00+01:00", "daypart": "morning", "weather": "clear sky, 19°C", "activity": "walking", "city": "London", "country_code": "GB", "mood": "happy", "taste": {"top_artists": ["Taylor Swift", "Ed Sheeran", "Dua Lipa"]}},
+    "expect": {"categories": ["Feel good", "Pop", "Commute", "Energize"], "language_words": []}
+  },
+  {
+    "id": "new-user-no-signals",
+    "context": {"local_time": "2026-10-28T18:00:00-04:00", "daypart": "evening", "weather": "overcast, 12°C", "activity": "still", "city": "New York", "country_code": "US", "taste": {"top_artists": []}},
+    "expect": {"categories": [], "language_words": []}
+  },
+  {
+    "id": "description-beats-weather",
+    "context": {"local_time": "2026-10-28T21:00:00+05:30", "daypart": "night", "weather": "heavy rain, 22°C", "activity": "still", "city": "Pune", "country_code": "IN", "mood": "calm", "description": "upbeat Bollywood dance songs for a party", "taste": {"top_artists": ["Arijit Singh"]}},
+    "expect": {"categories": ["Party", "Dance & electronic", "Energize", "Bollywood & Indian"], "language_words": ["Bollywood", "Hindi", "Punjabi"]}
+  }
+]
