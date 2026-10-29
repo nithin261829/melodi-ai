@@ -72,6 +72,53 @@ Melodi doesn't listen to the audio. It reads the *moment*, turns it into a music
 
 **Limit:** energy and valence steer which playlists are chosen and the order, but the score can't measure how a song actually sounds. Audio analysis is on the list for later.
 
+## How it picks the songs
+
+One real request, traced from start to finish (*rainy night drive in Hyderabad, mood "calm", likes Sid Sriram, M.M. Sreelekha and Anirudh*):
+
+```text
+3,364  curated playlists in YouTube Music's Moods & genres
+  ↓  code keeps the ones matching the target's keywords and categories
+ ~150  playlists shown to the model, numbered
+  ↓  the model picks 6 (numbers checked by code)
+    6  Night Drive · New Music Tamil · Tollywood Hitlist ·
+       Tollywood Essentials · soothing · Telugu
+  ↓  code loads every song in them
+  568  uploads → 353 different videos
+  ↓  different uploads of the same song merged (lyric video, official audio…)
+  331  songs  (22 duplicates merged, keeping the official audio)
+  ↓  every song scored; recent plays dropped; max 3 per artist
+   40  best songs, numbered
+  ↓  the model orders 15 of them and writes a reason for each
+   15  songs in the final mix
+```
+
+**The score**, worked out in code for every song:
+
+| Rule | Points |
+|---|---|
+| Appears in one of the chosen playlists | +2 for each playlist |
+| Near the top of a playlist (editors put standouts first) | up to +0.5 |
+| By one of your favourite artists | +1.5 |
+| Came from YouTube radio of a song you liked | +1 |
+| You played it recently | removed |
+| A 4th song by the same artist | removed |
+
+The real top of that list:
+
+| Song | In lists | Score |
+|---|---|---|
+| Chikiri Chikiri (Tamil) · A.R. Rahman | 3 | 6 + 0.47 = **6.47** |
+| Gundellonaa · Leon James, Anirudh | 2 | 4 + 0.49 + 1.5 (Anirudh) = **5.99** |
+| Kalaavathi · Thaman S, Sid Sriram | 2 | 4 + 0.46 + 1.5 (Sid Sriram) = **5.96** |
+| Urike Urike · M.M. Sreelekha, Sid Sriram | 2 | 4 + 0.43 + 1.5 = **5.93** |
+
+A song three editors agreed on beats one by a favourite artist that only two agreed on. That's on purpose: fitting the moment comes first, your taste second.
+
+**The final order.** The model gets the 40 songs as a numbered list and returns the playing order, a title and a reason per song. Code then drops any number that wasn't on the list, makes sure the same artist never plays twice in a row, and tops up from the scores if the model returned too few.
+
+**In agent mode** the steps are the same tools, but the model decides when to use them. In one run it searched, loaded 6 playlists, searched again for Sid Sriram and soundtracks, loaded 2 more (521 songs), then ranked and finished.
+
 ## How it's built
 
 - **A catalogue I could trust.** Instead of free-text search, Melodi reads YouTube Music's 3,364 editor-curated Moods & genres playlists, each labelled by mood and language (for example *Sad › Bollywood sad*). `ytmusicapi` crashed on some of those pages, so I wrote my own tolerant parser, load the 39 categories in parallel, and cache them per country for 24 hours.
