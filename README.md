@@ -292,7 +292,7 @@ The response has `title`, `description`, `target`, `sources` (the curated playli
 - **Evals:** a set of scenarios ("rainy night, sad, Telugu", "gym, hype, English") scored by rules plus an LLM judge, run in CI.
 - **Audio features:** measure how calm or energetic a song really sounds (Essentia arousal/valence, CLAP text-to-audio), so energy can count in the score.
 - **Tool-use agent:** expose catalogue search, collection and scoring as tools so Claude can retry when a mix looks weak.
-- **Learned scoring:** tune the weights from likes and skips, with taste embeddings in pgvector.
+- **Learned scoring:** tune the weights from likes and skips.
 - **🎬 Shot here:** songs from films shot in your city, using Wikidata filming locations and soundtrack albums.
 - **Deploy** so it works away from home Wi-Fi.
 
