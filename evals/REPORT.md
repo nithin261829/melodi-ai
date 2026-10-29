@@ -4,22 +4,22 @@ Rule-based checks on recorded mixes (15 songs each). No LLM judge. Re-run free w
 
 | Scenario | pipeline checks | agent checks |
 |---|---|---|
-| `rainy-night-drive-telugu` | not recorded | not recorded |
-| `sad-night-telugu` | not recorded | not recorded |
-| `gym-hype-english` | not recorded | not recorded |
-| `focus-study` | not recorded | not recorded |
-| `fall-asleep` | not recorded | not recorded |
-| `romantic-evening-hindi` | not recorded | not recorded |
-| `tamil-house-party` | not recorded | not recorded |
-| `kpop-morning-walk` | not recorded | not recorded |
-| `punjabi-road-trip` | not recorded | not recorded |
-| `sunny-morning-english` | not recorded | not recorded |
-| `new-user-no-signals` | not recorded | not recorded |
-| `description-beats-weather` | not recorded | not recorded |
+| `rainy-night-drive-telugu` | ✅ 9/9 | ✅ 9/9 |
+| `sad-night-telugu` | ✅ 9/9 | ✅ 9/9 |
+| `gym-hype-english` | ✅ 8/8 | ✅ 8/8 |
+| `focus-study` | ✅ 8/8 | ✅ 8/8 |
+| `fall-asleep` | ✅ 8/8 | ✅ 8/8 |
+| `romantic-evening-hindi` | ✅ 9/9 | ✅ 9/9 |
+| `tamil-house-party` | ✅ 9/9 | ✅ 9/9 |
+| `kpop-morning-walk` | ✅ 9/9 | ✅ 9/9 |
+| `punjabi-road-trip` | ✅ 9/9 | ✅ 9/9 |
+| `sunny-morning-english` | ✅ 8/8 | ✅ 8/8 |
+| `new-user-no-signals` | ✅ 7/7 | ✅ 7/7 |
+| `description-beats-weather` | ✅ 9/9 | ✅ 9/9 |
 
 | | pipeline | agent |
 |---|---|---|
-| Checks passed | 0/0 (0%) | 0/0 (0%) |
-| Avg cost per mix | $0.0000 | $0.0000 |
-| Avg time per mix | 0.0 s | 0.0 s |
-| Total cost of this run | $0.000 | $0.000 |
+| Checks passed | 102/102 (100%) | 102/102 (100%) |
+| Avg cost per mix | $0.0014 | $0.0030 |
+| Avg time per mix | 11.7 s | 14.0 s |
+| Total cost of this run | $0.017 | $0.036 |

@@ -5,7 +5,7 @@
   <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0.162-009688" />
   <img alt="Anthropic SDK" src="https://img.shields.io/badge/Anthropic%20SDK-2.3-D97757" />
   <img alt="Claude" src="https://img.shields.io/badge/LLM-Claude%20Haiku%205.5-D97757" />
-  <img alt="Tests" src="https://img.shields.io/badge/tests-17%20passing-0A9EDC" />
+  <img alt="Tests" src="https://img.shields.io/badge/tests-22%20passing-0A9EDC" />
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green" />
 </p>
 
@@ -68,7 +68,7 @@ A real request: *Wednesday 9:40 pm · light rain, 24°C · driving · Hyderabad 
 | **Backend** | FastAPI, Pydantic v2, uvicorn, managed with `uv` |
 | **Client** | React Native / Expo ([`clients/react-native`](clients/react-native)), used by the [Melo](https://github.com/nithin261829/melo) iPhone app |
 | **Cost / speed** | ~$0.002 and ~14 s per mix on Haiku. Opus 5.5 was ~$0.05 and ~20 s ([measured](#measured-results)). |
-| **Tests** | 17 pytest unit tests covering everything that isn't the LLM, including every tool |
+| **Tests** | 22 pytest unit tests covering everything that isn't the LLM, plus lite evals: 12 scenarios × 2 modes, 100% of rule checks passing |
 
 ---
 
@@ -205,7 +205,7 @@ I wrote the loop by hand rather than using the SDK's beta tool runner, because i
 | Time | 14 s | 27 s |
 | Playlists used | 6 | 8 |
 
-Both mixes were calm Telugu and Tamil melodies built around Sid Sriram and Anirudh, with 4 songs in common. The agent is more flexible: it can rethink its search when the first results don't fit. It also costs about twice as much and takes twice as long, because every round resends the conversation. So the pipeline stays the default, and the agent is there for open-ended requests and for comparison. One run on each side isn't enough to say which one picks better songs.
+Both mixes were calm Telugu and Tamil melodies built around Sid Sriram and Anirudh, with 4 songs in common. The agent is more flexible: it can rethink its search when the first results don't fit. It also costs about twice as much and takes twice as long, because every round resends the conversation. So the pipeline stays the default, and the agent is there for open-ended requests and for comparison. Across the 12 eval scenarios both modes pass every rule check, with the agent costing about twice as much per mix ([lite evals](#lite-evals)).
 
 ---
 
@@ -272,7 +272,7 @@ Both mixes were calm Telugu and Tamil melodies centred on Sid Sriram and Anirudh
 ## Testing
 
 ```bash
-uv run pytest      # 17 passed
+uv run pytest      # 22 passed
 ```
 
 The tests cover everything around the model, where most real bugs live:
@@ -287,6 +287,29 @@ The tests cover everything around the model, where most real bugs live:
 - The final order keeps Claude's valid picks and tops up when there are too few
 - Every tool definition is a strict, closed JSON schema
 - Tools refuse playlist and candidate numbers they never handed out, enforce the 8-playlist limit, and require the right order (search, load, rank, finish)
+- The same artist never plays twice in a row
+- The eval rules themselves catch the problems they're meant to catch
+
+### Lite evals
+
+[`evals/`](evals) runs 12 scenarios through both modes and checks every mix with plain rules: right size, no duplicate songs, a reason for each song, at most 3 songs per artist, no artist twice in a row, a short title, no fallback, and whether the chosen playlists match the expected mood and language. There's no LLM judge, so checking is free; only recording new mixes costs API credit.
+
+```bash
+uv run python -m evals.run --record   # make 24 real mixes (~$0.05 on Haiku), save them, check them
+uv run python -m evals.run            # re-check the saved mixes for free
+```
+
+The scenarios cover a rainy Telugu night drive, a sad night, an English gym session, studying, falling asleep, a Hindi romantic evening, a Tamil house party, a K-Pop morning walk, a Punjabi road trip, a sunny English morning, a brand-new user with no history, and a request where the description ("upbeat Bollywood dance songs for a party") has to win over heavy rain.
+
+| | Pipeline | Agent |
+|---|---|---|
+| Rule checks passed | 102/102 (100%) | 102/102 (100%) |
+| Average cost per mix | $0.0014 | $0.0030 |
+| Average time per mix | 11.7 s | 14.0 s |
+
+**What the evals caught.** The first run scored 98% in both modes. All four failures were the same: the same artist twice in a row, even though the prompt asks the model to avoid it. I fixed it in code rather than in the prompt (`spread_artists` in `app/planner.py` moves a song as little as possible), re-recorded only the four failing mixes, and both modes reached 100%. The full table is in [`evals/REPORT.md`](evals/REPORT.md).
+
+These are rule checks, not a taste test: they confirm a mix is well-formed and matches the expected mood and language playlists, not that it's a great mix.
 
 Live runs are checked by hand: real songs, no duplicates, and the reasons match the songs.
 
@@ -311,7 +334,7 @@ Honest notes on what doesn't work yet:
 - **It depends on an unofficial client.** `ytmusicapi` can break when YouTube changes its pages. I already had to work around one crash.
 - **It runs on a local server,** so the phone needs to be on the same Wi-Fi. It isn't deployed.
 - **Reasons aren't fact-checked.** The songs are always real, but a reason can contain an unchecked claim. In one agent run Claude called a song "Anirudh-produced" when the listed artists were Anudeep Dev and Krishna Kanth.
-- **Quality is checked by hand,** one run at a time.
+- **Evals check rules, not taste.** They confirm each mix is well-formed and uses fitting playlists, but whether it's a *great* mix is still judged by listening.
 
 ---
 

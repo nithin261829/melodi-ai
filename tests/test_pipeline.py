@@ -3,7 +3,7 @@
 from app.candidates import Candidate, rank, song_key
 from app.catalog import Catalog, CatalogPlaylist
 from app.models import MixPlan, MusicTarget, OrderedPick, Taste
-from app.planner import assemble, clean_target, narrow, valid_picks
+from app.planner import assemble, clean_target, narrow, spread_artists, valid_picks
 
 
 def make_catalog() -> Catalog:
@@ -111,3 +111,15 @@ def test_rank_skips_a_song_if_any_version_was_played_recently():
     a = candidate("v1", "X", title="Same Song")
     b = candidate("v2", "X", title="Same Song (Official Audio)")
     assert rank({"v1": a, "v2": b}, Taste(recent_video_ids=["v2"]), keep=10) == []
+
+
+def test_spread_artists_avoids_back_to_back_with_minimal_moves():
+    order = [(candidate(str(i), a), None) for i, a in enumerate(["X", "X", "Y", "Z", "X"])]
+    leads = [c.artists[0] for c, _ in spread_artists(order)]
+    assert leads == ["X", "Y", "X", "Z", "X"]
+    assert all(a != b for a, b in zip(leads, leads[1:]))
+
+
+def test_spread_artists_leaves_unfixable_tails_alone():
+    order = [(candidate(str(i), "X"), None) for i in range(3)]
+    assert len(spread_artists(order)) == 3

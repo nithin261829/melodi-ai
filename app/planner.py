@@ -178,6 +178,7 @@ def assemble(mix: MixPlan, ranked: list[candidates.Candidate], size: int) -> lis
             break
         if i not in used:
             order.append((c, None))
+    order = spread_artists(order[:size])
     return [
         PlannedTrack(
             video_id=c.video_id,
@@ -190,3 +191,20 @@ def assemble(mix: MixPlan, ranked: list[candidates.Candidate], size: int) -> lis
         )
         for c, why in order[:size]
     ]
+
+
+def spread_artists(order: list[tuple[candidates.Candidate, str | None]]) -> list[tuple[candidates.Candidate, str | None]]:
+    """Moves songs as little as possible so the same lead artist never plays twice in a row.
+
+    The LLM is asked to do this, but the lite evals caught it slipping in 4 of 24 mixes.
+    """
+    lead = lambda item: (item[0].artists[0] if item[0].artists else "").casefold()  # noqa: E731
+    out = list(order)
+    for i in range(1, len(out)):
+        if lead(out[i]) != lead(out[i - 1]):
+            continue
+        swap = next((j for j in range(i + 1, len(out)) if lead(out[j]) != lead(out[i - 1])), None)
+        if swap is not None:
+            out.insert(i, out.pop(swap))
+    return out
+
